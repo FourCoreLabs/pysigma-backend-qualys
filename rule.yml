@@ -1,0 +1,28 @@
+title: Execution of whoami.exe for Privilege Discovery (via Process creation)
+id: 953469a3-76d7-4554-99f3-d37ebe5090e2
+status: test
+description: This rule detects the execution of whoami.exe, a command-line utility used to display user, group, and privileges information for the user who is currently logged on. Attackers may use whoami.exe to gather information about their current privileges and the environment for potential privilege escalation.
+references:
+    - https://speakerdeck.com/heirhabarov/hunting-for-privilege-escalation-in-windows-environment
+author: Parth Gol (@fourcore.io)
+date: 2024-07-23
+tags:
+    - attack.discovery
+    - attack.t1033
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_img:
+        - OriginalFileName: 'whoami.exe'
+        - Image|endswith: '\whoami.exe'
+        - CommandLine|contains: 'all'
+    condition: selection_img
+falsepositives:
+  - This rule may produce false positives if administrators or automated scripts legitimately use whoami.exe for user or privilege information. It is important to validate the context of the activity.
+  - Identify the user account that executed whoami.exe and verify if it should perform this kind of action.
+  - Check whether the usage of whoami.exe was part of legitimate administrative tasks or updates.
+investigate:
+    - Identify the user account that executed whoami.exe and verify if it should perform this kind of action.
+    - Check whether the usage of whoami.exe was part of legitimate administrative tasks or updates.
+level: low
